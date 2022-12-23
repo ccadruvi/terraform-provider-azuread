@@ -152,11 +152,19 @@ func accessPackageResourceCatalogAssociationResourceDelete(ctx context.Context, 
 		CatalogId:             &catalogId,
 		AccessPackageResource: resource,
 	}
-	_, err = client.Delete(ctx, resourceCatalogAssociation)
-	if err != nil {
-		return tf.ErrorDiagPathF(err, "id", "Deleting access package resource and catalog association with resource %q@%q and catalog id %q.",
-			*resourceCatalogAssociation.AccessPackageResource.OriginId, resourceCatalogAssociation.AccessPackageResource.OriginSystem, *resourceCatalogAssociation.CatalogId)
+	maxWaitTimeInSeconds := 300
+	sleepTimeInSeconds := 5
+	for i := 0; i < maxWaitTimeInSeconds; i += sleepTimeInSeconds {
+		_, err = client.Delete(ctx, resourceCatalogAssociation)
+		if err != nil {
+			log.Printf("[DEBUG] Retrying deletion of access package resource and catalog association with resource %q@%q and catalog id %q. in %d seconds", *resourceCatalogAssociation.AccessPackageResource.OriginId, resourceCatalogAssociation.AccessPackageResource.OriginSystem, *resourceCatalogAssociation.CatalogId, sleepTimeInSeconds)
+			time.Sleep(time.Duration(sleepTimeInSeconds) * time.Second)
+			continue
+		} else {
+			return nil
+		}
 	}
 
-	return nil
+	return tf.ErrorDiagPathF(err, "id", "Deleting access package resource and catalog association with resource %q@%q and catalog id %q.",
+		*resourceCatalogAssociation.AccessPackageResource.OriginId, resourceCatalogAssociation.AccessPackageResource.OriginSystem, *resourceCatalogAssociation.CatalogId)
 }
