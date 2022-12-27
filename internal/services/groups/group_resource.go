@@ -796,6 +796,20 @@ func groupResourceCreate(ctx context.Context, d *schema.ResourceData, meta inter
 		}
 	}
 
+	// after group creation some groups cannot be read by tf, returning error 404. Hacky approach: wait.
+	maxWaitTimeSeconds := 300
+	sleepTimeInSeconds := 5
+	for i := 0; i < maxWaitTimeSeconds; i += sleepTimeInSeconds {
+		_, _, err = client.Get(ctx, d.Id(), odata.Query{})
+		if err != nil {
+			log.Printf("[DEBUG], Retrying group read with resource %q in %d seconds", d.Id(), sleepTimeInSeconds)
+			time.Sleep(time.Duration(sleepTimeInSeconds) * time.Second)
+			continue
+		} else {
+			break
+		}
+	}
+
 	return groupResourceRead(ctx, d, meta)
 }
 
