@@ -889,12 +889,13 @@ func groupResourceUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 		// See https://docs.microsoft.com/en-us/graph/known-issues#groups
 
 		// AllowExternalSenders can only be set in its own PATCH request; including other properties returns a 400
-		if v, ok := d.GetOkExists("external_senders_allowed"); ok { //nolint:staticcheck
+		if d.HasChange("external_senders_allowed") { //nolint:staticcheck
+			v := d.Get("external_senders_allowed").(bool)
 			if _, err := client.Update(ctx, msgraph.Group{
 				DirectoryObject: msgraph.DirectoryObject{
 					Id: group.ID(),
 				},
-				AllowExternalSenders: utils.Bool(v.(bool)),
+				AllowExternalSenders: utils.Bool(v),
 			}); err != nil {
 				return tf.ErrorDiagF(err, "Failed to set `external_senders_allowed` for group with object ID %q", *group.ID())
 			}
@@ -906,19 +907,20 @@ func groupResourceUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 				if err != nil {
 					return nil, err
 				}
-				return utils.Bool(group.AllowExternalSenders != nil && *group.AllowExternalSenders == v.(bool)), nil
+				return utils.Bool(group.AllowExternalSenders != nil && *group.AllowExternalSenders == v), nil
 			}); err != nil {
 				return tf.ErrorDiagF(err, "Waiting for update of `external_senders_allowed` for group with object ID %q", *group.ID())
 			}
 		}
 
 		// AutoSubscribeNewMembers can only be set in its own PATCH request; including other properties returns a 400
-		if v, ok := d.GetOkExists("auto_subscribe_new_members"); ok { //nolint:staticcheck
+		if d.HasChange("auto_subscribe_new_members") { //nolint:staticcheck
+			v := d.Get("auto_subscribe_new_members").(bool)
 			if _, err := client.Update(ctx, msgraph.Group{
 				DirectoryObject: msgraph.DirectoryObject{
 					Id: group.ID(),
 				},
-				AutoSubscribeNewMembers: utils.Bool(v.(bool)),
+				AutoSubscribeNewMembers: utils.Bool(v),
 			}); err != nil {
 				return tf.ErrorDiagF(err, "Failed to set `auto_subscribe_new_members` for group with object ID %q", *group.ID())
 			}
@@ -930,19 +932,20 @@ func groupResourceUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 				if err != nil {
 					return nil, err
 				}
-				return utils.Bool(group.AutoSubscribeNewMembers != nil && *group.AutoSubscribeNewMembers == v.(bool)), nil
+				return utils.Bool(group.AutoSubscribeNewMembers != nil && *group.AutoSubscribeNewMembers == v), nil
 			}); err != nil {
 				return tf.ErrorDiagF(err, "Waiting for update of `auto_subscribe_new_members` for group with object ID %q", *group.ID())
 			}
 		}
 
 		// HideFromAddressLists can only be set in its own PATCH request; including other properties returns a 400
-		if v, ok := d.GetOkExists("hide_from_address_lists"); ok { //nolint:staticcheck
+		if d.HasChange("hide_from_address_lists") { //nolint:staticcheck
+			v := d.Get("hide_from_address_lists").(bool)
 			if _, err := client.Update(ctx, msgraph.Group{
 				DirectoryObject: msgraph.DirectoryObject{
 					Id: group.ID(),
 				},
-				HideFromAddressLists: utils.Bool(v.(bool)),
+				HideFromAddressLists: utils.Bool(v),
 			}); err != nil {
 				return tf.ErrorDiagF(err, "Failed to set `hide_from_address_lists` for group with object ID %q", *group.ID())
 			}
@@ -954,19 +957,20 @@ func groupResourceUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 				if err != nil {
 					return nil, err
 				}
-				return utils.Bool(group.HideFromAddressLists != nil && *group.HideFromAddressLists == v.(bool)), nil
+				return utils.Bool(group.HideFromAddressLists != nil && *group.HideFromAddressLists == v), nil
 			}); err != nil {
 				return tf.ErrorDiagF(err, "Waiting for update of `hide_from_address_lists` for group with object ID %q", *group.ID())
 			}
 		}
 
 		// HideFromOutlookClients can only be set in its own PATCH request; including other properties returns a 400
-		if v, ok := d.GetOkExists("hide_from_outlook_clients"); ok { //nolint:staticcheck
+		if d.HasChange("hide_from_outlook_clients") { //nolint:staticcheck
+			v := d.Get("hide_from_outlook_clients").(bool)
 			if _, err := client.Update(ctx, msgraph.Group{
 				DirectoryObject: msgraph.DirectoryObject{
 					Id: group.ID(),
 				},
-				HideFromOutlookClients: utils.Bool(v.(bool)),
+				HideFromOutlookClients: utils.Bool(v),
 			}); err != nil {
 				return tf.ErrorDiagF(err, "Failed to set `hide_from_outlook_clients` for group with object ID %q", *group.ID())
 			}
@@ -978,7 +982,7 @@ func groupResourceUpdate(ctx context.Context, d *schema.ResourceData, meta inter
 				if err != nil {
 					return nil, err
 				}
-				return utils.Bool(group.HideFromOutlookClients != nil && *group.HideFromOutlookClients == v.(bool)), nil
+				return utils.Bool(group.HideFromOutlookClients != nil && *group.HideFromOutlookClients == v), nil
 			}); err != nil {
 				return tf.ErrorDiagF(err, "Waiting for update of `hide_from_outlook_clients` for group with object ID %q", *group.ID())
 			}
